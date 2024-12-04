@@ -1,0 +1,62 @@
+:host{
+  display: block;
+  width: 100vw;
+}
+.chessboard-overlay {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 90vh; 
+    width: 90vw; 
+    padding: 1rem;
+  }
+  
+  .chessboard-container {
+    width: fit-content;
+    background: rgba(255, 255, 255, 0.1); 
+    padding: 1rem;
+    border-radius:20px; 
+    font-family: Arial, sans-serif; 
+  }
+  .chessboard{
+    margin: 10px;
+  }
+  /* Labels (Top and Bottom Letters) */
+  .labels {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr); /* Create columns to align with chessboard */
+    gap: 0; /* Remove gaps between letters */
+    width: 100%; /* Matches chessboard width */
+    margin: 0; /* No extra margin around */
+    text-align: center;
+    font-size: 1.1rem;
+    color: white;
+  }
+  /* Row Numbers */
+  .label.number {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+    color: white;
+    font-family: Arial, sans-serif; 
+  }
+ 
+  
+  .row {
+    display: flex;
+  }
+  
+  .square {
+    width: calc(70vmin / 8);
+    height: calc(70vmin / 8);
+  }
+  
+  .dark {
+    background-color: #373855;
+  }
+  
+  .light {
+    background-color: white;
+  }
+  

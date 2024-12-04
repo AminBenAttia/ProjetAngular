@@ -1,0 +1,39 @@
+<div class="chessboard-overlay">
+    <div class="chessboard-container">
+      <!-- Letters on Top -->
+     
+      <div class="labels top">
+        <span *ngFor="let letter of letters">{{ letter }}</span>
+      </div>
+      <!-- Chessboard -->
+      <div class="chessboard">
+        
+        <div
+          *ngFor="let row of rows; let rowIndex = index"
+          class="row"
+        >
+          <!-- Numbers on the Left -->
+          <div class="label number" style="margin-right: 20px;"> {{ 8 - rowIndex }}</div>
+  
+          <!-- Chessboard Squares -->
+          <div
+            *ngFor="let col of cols; let colIndex = index"
+            class="square"
+            [ngClass]="{
+              dark: (rowIndex + colIndex) % 2 === 0,
+              light: (rowIndex + colIndex) % 2 !== 0
+            }"
+          ></div>
+  
+          <!-- Numbers on the Right -->
+          <div class="label number" style="margin-left: 20px;">{{ 8 - rowIndex }}</div>
+        </div>
+              <!-- Letters on the Bottom -->
+
+      </div>
+      <div class="labels bottom">
+        <span *ngFor="let letter of letters">{{ letter }}</span>
+      </div>
+
+    </div>
+  </div>
