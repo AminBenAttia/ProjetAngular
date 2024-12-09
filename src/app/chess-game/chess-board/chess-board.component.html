@@ -1,39 +1,34 @@
 <div class="chessboard-overlay">
-    <div class="chessboard-container">
-      <!-- Letters on Top -->
-     
-      <div class="labels top">
-        <span *ngFor="let letter of letters">{{ letter }}</span>
-      </div>
-      <!-- Chessboard -->
-      <div class="chessboard">
-        
+  <div class="chessboard-container">
+    <div class="labels top" style="grid-area: 1 / 2 / 2 / 3;">
+      <span *ngFor="let letter of letters" > {{ letter }}</span>
+    </div>
+    <div style="grid-area: 2 / 1 / 3 / 2; " class="numbers">
+      <div  *ngFor="let row of rows; let rowIndex = index" >
+        {{ 8 - rowIndex }}
+      </div> 
+    </div>
+
+    <div class="chessboard"  style="grid-area: 2 / 2 / 3 / 3;">
+      <div *ngFor="let row of rows; let rowIndex = index" class="row">
         <div
-          *ngFor="let row of rows; let rowIndex = index"
-          class="row"
+          *ngFor="let col of cols; let colIndex = index"
+          class="square"
+          [ngClass]="{
+            dark: (rowIndex + colIndex) % 2 === 0,
+            light: (rowIndex + colIndex) % 2 !== 0
+          }"
         >
-          <!-- Numbers on the Left -->
-          <div class="label number" style="margin-right: 20px;"> {{ 8 - rowIndex }}</div>
-  
-          <!-- Chessboard Squares -->
-          <div
-            *ngFor="let col of cols; let colIndex = index"
-            class="square"
-            [ngClass]="{
-              dark: (rowIndex + colIndex) % 2 === 0,
-              light: (rowIndex + colIndex) % 2 !== 0
-            }"
-          ></div>
-  
-          <!-- Numbers on the Right -->
-          <div class="label number" style="margin-left: 20px;">{{ 8 - rowIndex }}</div>
         </div>
-              <!-- Letters on the Bottom -->
-
       </div>
-      <div class="labels bottom">
-        <span *ngFor="let letter of letters">{{ letter }}</span>
-      </div>
-
+    </div>
+    <div style="grid-area: 2 / 3 / 3 / 4; " class="numbers">
+      <div  *ngFor="let row of rows; let rowIndex = index" >
+        {{ 8 - rowIndex }}
+      </div> 
+    </div>
+    <div class="labels bottom" style="grid-area: 3 / 2 / 4 / 3;">
+      <span *ngFor="let letter of letters" > {{ letter }}</span>
     </div>
   </div>
+</div>
