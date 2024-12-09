@@ -9,18 +9,9 @@
       </div> 
     </div>
 
-    <div class="chessboard"  style="grid-area: 2 / 2 / 3 / 3;">
-      <div *ngFor="let row of rows; let rowIndex = index" class="row">
-        <div
-          *ngFor="let col of cols; let colIndex = index"
-          class="square"
-          [ngClass]="{
-            dark: (rowIndex + colIndex) % 2 === 0,
-            light: (rowIndex + colIndex) % 2 !== 0
-          }"
-        >
-        </div>
-      </div>
+    <div style="grid-area: 2 / 2 / 3 / 3;">
+    <canvas id="canvas" height="600px" width="600px">
+    </canvas>
     </div>
     <div style="grid-area: 2 / 3 / 3 / 4; " class="numbers">
       <div  *ngFor="let row of rows; let rowIndex = index" >
@@ -32,3 +23,4 @@
     </div>
   </div>
 </div>
+<app-chess-piece style="display: none;" id="piece"></app-chess-piece>
