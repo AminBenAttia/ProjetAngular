@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component ,Input} from '@angular/core';
+import { Piece } from 'src/app/models/piece.model';
 
 @Component({
   selector: 'app-piece-card',
@@ -7,5 +8,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./piece-card.component.css']
 })
 export class PieceCardComponent {
-
+  @Input() piece!: Piece;
 }
