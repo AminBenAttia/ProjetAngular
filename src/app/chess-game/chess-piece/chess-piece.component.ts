@@ -1,6 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ChessPieceType } from 'src/types/types';
+import { ChessPieceType, piecesType } from 'src/types/types';
+import { black, size, white } from 'src/utils/color';
+import { canPawnMove } from 'src/utils/movePieces';
 
 @Component({
   selector: '[app-chess-piece]',
@@ -10,12 +12,46 @@ import { ChessPieceType } from 'src/types/types';
   styleUrls: ['./chess-piece.component.css']
 })
 export class ChessPieceComponent {
-@Input() pieceType!:ChessPieceType
-InitPiece(ctx:CanvasRenderingContext2D,x:number,y:number,size:number=75){
-  const piece = new Image()
-  piece.src=`../../../assets/${this.pieceType}.png`
-  piece.onload=()=>{
-  ctx.drawImage(piece,x,y,size,size)
+  pieceType!: ChessPieceType
+  x: number = 0
+  y: number = 0
+  pieceImage = new Image()
+  color:"b"|"w"|undefined
+  setPosition(x: number, y: number) {
+    this.x = x
+    this.y = y
   }
-}
+  InitPiece(ctx: CanvasRenderingContext2D, x: number, y: number, pieceType: ChessPieceType, color: "b" | "w", size: number = 60) {
+    this.pieceType = pieceType
+    this.color=color
+    this.setPosition(y / size, x / size)
+    this.pieceImage.src = `../../../assets/${(color=="b"?"black":"white") + "-" + this.pieceType}.png`
+    this.pieceImage.onload = () => {
+      ctx.drawImage(this.pieceImage, x, y, size, size)
+    }
+  }
+  checkIsInBlock(x: number, y: number) {
+    return this.x == x && this.y == y
+  }
+  moveTo(ctx: CanvasRenderingContext2D,   mx: number, my: number,) {
+    if (Math.abs(this.x - this.y) % 2 != 0) {
+      ctx.fillStyle = white;
+      ctx.fillRect(this.y * size, this.x * size, size, size);
+    } else {
+      ctx.fillStyle = black;
+      ctx.fillRect(this.y * size, this.x * size, size, size);
+    }
+    this.x = mx
+    this.y = my
+    ctx.drawImage(this.pieceImage, this.y * size, this.x * size, size, size)
+  }
+  canMove(pieces: piecesType, turn: "b" | "w") {
+    let greenBlocks = canPawnMove(pieces, this.x, this.y, turn)
+    return greenBlocks
+  }
+  colorUnder(ctx: CanvasRenderingContext2D,color:string){
+    ctx.fillStyle = color;
+    ctx.fillRect(this.y * size, this.x * size, size, size);
+    ctx.drawImage(this.pieceImage, this.y * size, this.x * size, size, size)
+  }
 }

@@ -10,7 +10,7 @@
     </div>
 
     <div style="grid-area: 2 / 2 / 3 / 3;">
-    <canvas id="canvas">
+    <canvas id="canvas" (click)="where($event)">
     </canvas>
     </div>
     <div style="grid-area: 2 / 3 / 3 / 4; " class="numbers">
@@ -23,16 +23,5 @@
     </div>
   </div>
 </div>
-<img app-chess-piece pieceType="black-bishop" #blackBishop hidden>
-<img app-chess-piece pieceType="black-king" #blackKing hidden>
-<img app-chess-piece pieceType="black-hourse" #blackHourse hidden>
-<img app-chess-piece pieceType="black-pawn" #blackPawn hidden>
-<img app-chess-piece pieceType="black-queen"#blackQueen hidden>
-<img app-chess-piece pieceType="black-rook" #blackRook hidden>
-<img app-chess-piece pieceType="white-bishop" #whiteBishop hidden>
-<img app-chess-piece pieceType="white-king" #whiteKing hidden>
-<img app-chess-piece pieceType="white-hourse" #whiteHourse hidden>
-<img app-chess-piece pieceType="white-pawn" #whitePawn hidden>
-<img app-chess-piece pieceType="white-queen"#whiteQueen hidden>
-<img app-chess-piece pieceType="white-rook" #whiteRook hidden>
+<ng-container #dynamicContainer></ng-container>
 
