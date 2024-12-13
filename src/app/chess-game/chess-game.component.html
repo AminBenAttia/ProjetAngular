@@ -1,0 +1,2 @@
+<h1 style="color: white;text-align: center">{{turn=="b" ? "Black's Turn" : "white's turn"}}</h1>
+<app-chess-board [turn]="turn" (changeTurn)="changeTurn($event)"/>

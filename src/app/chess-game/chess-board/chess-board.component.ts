@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ComponentRef, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, ComponentRef, EventEmitter, Input, Output, ViewChild, ViewContainerRef } from '@angular/core';
 import { ChessPieceComponent } from "../chess-piece/chess-piece.component";
 import { ChessPieceType, piecesType } from 'src/types/types';
 import { black, green, red, size, white } from 'src/utils/color';
@@ -24,7 +24,8 @@ export class ChessBoardComponent {
   selectedPiece: ChessPieceComponent | undefined
   availibeBlocks: { x: number, y: number }[] | undefined
   killBlocks: { x: number, y: number }[] | undefined
-  turn: "b" | "w" = "b"
+  @Input() turn: "b" | "w"= "b" 
+  @Output() changeTurn:EventEmitter<"b"|"w">=new EventEmitter()
   piecesToGenerate: { type: ChessPieceType, positions: { x: number, y: number }[] }[] = [
     { type: 'rook', positions: [{ x: 0, y: 0 }, { x: 0, y: 7 }] },
     { type: "hourse", positions: [{ x: 0, y: 1 }, { x: 0, y: 6 }] },
@@ -52,9 +53,9 @@ export class ChessBoardComponent {
       newMap.set(newKey, piece)
     return newMap
   }
-  colorBlock(ctx: CanvasRenderingContext2D, x: number, y: number, color: string,padding:number=0) {
+  colorBlock(ctx: CanvasRenderingContext2D, x: number, y: number, color: string, padding: number = 0) {
     ctx.fillStyle = color;
-    ctx.fillRect(y * this.size+(padding/2), x * this.size+(padding/2), this.size-padding, this.size-padding);
+    ctx.fillRect(y * this.size + (padding / 2), x * this.size + (padding / 2), this.size - padding, this.size - padding);
   }
   drawBoard(ctx: CanvasRenderingContext2D) {
     for (let i = 0; i < 8; i += 2) {
@@ -110,7 +111,6 @@ export class ChessBoardComponent {
     }
     this.drawBoard(ctx)
     this.generatePieces(ctx)
-    console.log(this.pieces[0])
     this.generatePawns(ctx)
   }
   removePiece(piece: ChessPieceComponent) {
@@ -121,18 +121,18 @@ export class ChessBoardComponent {
       }
     }
     this.piecesMap = newMap
-    let aux:ComponentRef<ChessPieceComponent>[]=[]
-    for(let p of this.pieces[piece.color == "b" ? 0 : 1]!.get(piece.pieceType)!){
+    let aux: ComponentRef<ChessPieceComponent>[] = []
+    for (let p of this.pieces[piece.color == "b" ? 0 : 1]!.get(piece.pieceType)!) {
       aux.push(p)
     }
-    while(this.pieces[piece.color == "b" ? 0 : 1]!.get(piece.pieceType)!.length>0){
+    while (this.pieces[piece.color == "b" ? 0 : 1]!.get(piece.pieceType)!.length > 0) {
       this.pieces[piece.color == "b" ? 0 : 1]?.get(piece.pieceType)!.pop()
     }
-  for(let p of aux){
-    if (!(p.instance.x == piece.x && p.instance.y == piece.y)) {
-      this.pieces[piece.color == "b" ? 0 : 1]?.get(piece.pieceType)!.push(p)
+    for (let p of aux) {
+      if (!(p.instance.x == piece.x && p.instance.y == piece.y)) {
+        this.pieces[piece.color == "b" ? 0 : 1]?.get(piece.pieceType)!.push(p)
+      }
     }
-  }
   }
   where(ev: MouseEvent) {
     let y = Math.floor((ev.clientX - this.canvas!.offsetLeft) / this.size)
@@ -158,53 +158,54 @@ export class ChessBoardComponent {
           for (let block of this.killBlocks) {
             this.mapGet(this.piecesMap, block)?.instance.colorUnder(ctx, red)
           }
-          this.moveMode = !this.moveMode
+        this.moveMode = !this.moveMode
       }
     } else {
-      if(this.selectedPiece){
-      let canMove = false
-      if (this.availibeBlocks) {
-        for (let block of this.availibeBlocks) {
-          if (x == block.x && y == block.y) canMove = true
-          if (Math.abs(block.x - block.y) % 2 != 0) {
-            this.colorBlock(ctx, block.x, block.y, white)
-          } else {
-            this.colorBlock(ctx, block.x, block.y, black)
-          }
-        }
-      }
-      if (!canMove) {
-        if (this.killBlocks) {
-          let pieceToKill:ComponentRef<ChessPieceComponent>|undefined
-          for (let block of this.killBlocks) {
-            let piece = this.mapGet(this.piecesMap, { x:block.x, y:block.y })
-            if (x == block.x && y == block.y) {
-              canMove = true
-              if (piece) {
-                pieceToKill=piece
-              }  
-            }
+      if (this.selectedPiece) {
+        let canMove = false
+        if (this.availibeBlocks) {
+          for (let block of this.availibeBlocks) {
+            if (x == block.x && y == block.y) canMove = true
             if (Math.abs(block.x - block.y) % 2 != 0) {
-              piece?.instance.colorUnder(ctx, white)
+              this.colorBlock(ctx, block.x, block.y, white)
             } else {
-               piece?.instance.colorUnder(ctx, black)
+              this.colorBlock(ctx, block.x, block.y, black)
             }
           }
-          if(pieceToKill){
-            pieceToKill.destroy()
-            this.removePiece(pieceToKill.instance)
-          }
         }
+          if (this.killBlocks) {
+            let pieceToKill: ComponentRef<ChessPieceComponent> | undefined
+            for (let block of this.killBlocks) {
+              let piece = this.mapGet(this.piecesMap, { x: block.x, y: block.y })
+              if (piece) {
+                if (x == block.x && y == block.y) {
+                  canMove = true
+                  pieceToKill = piece
+                }
+                if (Math.abs(block.x - block.y) % 2 != 0) {
+                  piece!.instance.colorUnder(ctx, white)
+                } else {
+                  piece!.instance.colorUnder(ctx, black)
+                }
+              }
+            }
+            if (pieceToKill) {
+              pieceToKill.destroy()
+              pieceToKill.instance.pieceImage = new Image()
+              this.removePiece(pieceToKill.instance)
+            }
+          }
+        
+        if (canMove) {
+          this.piecesMap = this.changeMapKey(this.piecesMap, { x: this.selectedPiece.x, y: this.selectedPiece.y }, { x, y })
+          this.selectedPiece.moveTo(ctx, x, y)
+          //this.turn = this.turn == "b" ? "w" : "b"
+          this.changeTurn.emit(this.turn == "b" ? "w" : "b")
+        }
+        this.selectedPiece = undefined
       }
-      if (canMove) {
-        this.piecesMap = this.changeMapKey(this.piecesMap, { x: this.selectedPiece.x, y: this.selectedPiece.y }, { x, y })
-        this.selectedPiece.moveTo(ctx, x, y)
-        this.turn = this.turn == "b" ? "w" : "b"
-      }
-      this.selectedPiece = undefined
+      this.moveMode = !this.moveMode
     }
-    this.moveMode = !this.moveMode
-  }
-  
+
   }
 }
