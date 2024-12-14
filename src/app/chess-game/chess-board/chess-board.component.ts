@@ -3,6 +3,7 @@ import { Component, ComponentRef, EventEmitter, Input, Output, ViewChild, ViewCo
 import { ChessPieceComponent } from "../chess-piece/chess-piece.component";
 import { ChessPieceType, piecesType } from 'src/types/types';
 import { black, green, red, size, white } from 'src/utils/color';
+import { check } from 'src/utils/movePieces';
 
 @Component({
   selector: 'app-chess-board',
@@ -24,8 +25,10 @@ export class ChessBoardComponent {
   selectedPiece: ChessPieceComponent | undefined
   availibeBlocks: { x: number, y: number }[] | undefined
   killBlocks: { x: number, y: number }[] | undefined
-  @Input() turn: "b" | "w"= "b" 
-  @Output() changeTurn:EventEmitter<"b"|"w">=new EventEmitter()
+  @Input() turn: "b" | "w" = "b"
+  @Input() isGameOver: boolean = false
+  @Output() changeTurn: EventEmitter<"b" | "w"> = new EventEmitter()
+  @Output() gameOver: EventEmitter<boolean> = new EventEmitter()
   piecesToGenerate: { type: ChessPieceType, positions: { x: number, y: number }[] }[] = [
     { type: 'rook', positions: [{ x: 0, y: 0 }, { x: 0, y: 7 }] },
     { type: "hourse", positions: [{ x: 0, y: 1 }, { x: 0, y: 6 }] },
@@ -114,6 +117,7 @@ export class ChessBoardComponent {
     this.generatePawns(ctx)
   }
   removePiece(piece: ChessPieceComponent) {
+
     let newMap: Map<{ x: number, y: number }, ComponentRef<ChessPieceComponent>> = new Map()
     for (let [key, val] of this.piecesMap) {
       if (!(key.x == piece.x && key.y == piece.y)) {
@@ -135,46 +139,48 @@ export class ChessBoardComponent {
     }
   }
   where(ev: MouseEvent) {
-    let y = Math.floor((ev.clientX - this.canvas!.offsetLeft) / this.size)
-    let x = Math.floor((ev.clientY - this.canvas!.offsetTop) / this.size)
-    let ctx = this.canvas?.getContext("2d")!
-    if (!this.moveMode) {
-      for (let [key, val] of this.pieces[this.turn == "b" ? 0 : 1]!) {
-        for (let piece of val) {
-          if (piece.instance.checkIsInBlock(x, y)) {
-            this.selectedPiece = piece.instance
-          }
-        }
-      }
-      if (this.selectedPiece) {
-        let { greenBlocks, canKill } = this.selectedPiece!.canMove(this.pieces, this.turn)
-        this.availibeBlocks = greenBlocks
-        this.killBlocks = canKill
-        if (this.availibeBlocks)
-          for (let block of this.availibeBlocks) {
-            this.colorBlock(ctx, block.x, block.y, green)
-          }
-        if (this.killBlocks)
-          for (let block of this.killBlocks) {
-            this.mapGet(this.piecesMap, block)?.instance.colorUnder(ctx, red)
-          }
-        this.moveMode = !this.moveMode
-      }
-    } else {
-      if (this.selectedPiece) {
-        let canMove = false
-        if (this.availibeBlocks) {
-          for (let block of this.availibeBlocks) {
-            if (x == block.x && y == block.y) canMove = true
-            if (Math.abs(block.x - block.y) % 2 != 0) {
-              this.colorBlock(ctx, block.x, block.y, white)
-            } else {
-              this.colorBlock(ctx, block.x, block.y, black)
+    if (!this.isGameOver) {
+      let y = Math.floor((ev.clientX - this.canvas!.offsetLeft) / this.size)
+      let x = Math.floor((ev.clientY - this.canvas!.offsetTop) / this.size)
+      let ctx = this.canvas?.getContext("2d")!
+      if (!this.moveMode) {
+        for (let [key, val] of this.pieces[this.turn == "b" ? 0 : 1]!) {
+          for (let piece of val) {
+            if (piece.instance.checkIsInBlock(x, y)) {
+              this.selectedPiece = piece.instance
             }
           }
         }
+        if (this.selectedPiece) {
+          let { greenBlocks, canKill } = this.selectedPiece!.canMove(this.pieces, this.turn)
+          this.availibeBlocks = greenBlocks
+          this.killBlocks = canKill
+          if (this.availibeBlocks)
+            for (let block of this.availibeBlocks) {
+              this.colorBlock(ctx, block.x, block.y, green)
+            }
+          if (this.killBlocks)
+            for (let block of this.killBlocks) {
+              this.mapGet(this.piecesMap, block)?.instance.colorUnder(ctx, red)
+            }
+          this.moveMode = !this.moveMode
+        }
+      } else {
+        let pieceToKill: ComponentRef<ChessPieceComponent> | undefined
+        if (this.selectedPiece) {
+          let canMove = false
+          if (this.availibeBlocks) {
+            for (let block of this.availibeBlocks) {
+              if (x == block.x && y == block.y) canMove = true
+              if (Math.abs(block.x - block.y) % 2 != 0) {
+                this.colorBlock(ctx, block.x, block.y, white)
+              } else {
+                this.colorBlock(ctx, block.x, block.y, black)
+              }
+            }
+          }
           if (this.killBlocks) {
-            let pieceToKill: ComponentRef<ChessPieceComponent> | undefined
+
             for (let block of this.killBlocks) {
               let piece = this.mapGet(this.piecesMap, { x: block.x, y: block.y })
               if (piece) {
@@ -191,21 +197,24 @@ export class ChessBoardComponent {
             }
             if (pieceToKill) {
               pieceToKill.destroy()
-              pieceToKill.instance.pieceImage = new Image()
               this.removePiece(pieceToKill.instance)
             }
           }
-        
-        if (canMove) {
-          this.piecesMap = this.changeMapKey(this.piecesMap, { x: this.selectedPiece.x, y: this.selectedPiece.y }, { x, y })
-          this.selectedPiece.moveTo(ctx, x, y)
-          //this.turn = this.turn == "b" ? "w" : "b"
-          this.changeTurn.emit(this.turn == "b" ? "w" : "b")
-        }
-        this.selectedPiece = undefined
-      }
-      this.moveMode = !this.moveMode
-    }
 
+          if (canMove) {
+            this.piecesMap = this.changeMapKey(this.piecesMap, { x: this.selectedPiece.x, y: this.selectedPiece.y }, { x, y })
+            this.selectedPiece.moveTo(ctx, x, y, pieceToKill != undefined)
+            //this.turn = this.turn == "b" ? "w" : "b"
+            this.changeTurn.emit(this.turn == "b" ? "w" : "b")
+          }
+          this.selectedPiece = undefined
+        }
+        let checkMate = check(this.pieces, this.pieces[this.turn == "b" ? 1 : 0]!.get("king")!.at(0)!.instance.x, this.pieces[this.turn == "b" ? 1 : 0]!.get("king")!.at(0)!.instance.y, this.turn == "b" ? "w" : "b")
+        if (checkMate) {
+          this.gameOver.emit(true)
+        }
+        this.moveMode = !this.moveMode
+      }
+    }
   }
 }

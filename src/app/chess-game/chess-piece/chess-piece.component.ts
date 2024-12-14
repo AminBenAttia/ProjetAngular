@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ChessPieceType, piecesType } from 'src/types/types';
 import { black, size, white } from 'src/utils/color';
-import { canPawnMove, canRookMove } from 'src/utils/movePieces';
+import { canBishopMove, canKingMove, canknightMove, canPawnMove, canQueenMove, canRookMove } from 'src/utils/movePieces';
 
 @Component({
   selector: '[app-chess-piece]',
@@ -33,7 +33,7 @@ export class ChessPieceComponent {
   checkIsInBlock(x: number, y: number) {
     return this.x == x && this.y == y
   }
-  moveTo(ctx: CanvasRenderingContext2D, mx: number, my: number,) {
+  moveTo(ctx: CanvasRenderingContext2D, mx: number, my: number,kill:Boolean=false) {
     if (Math.abs(this.x - this.y) % 2 != 0) {
       ctx.fillStyle = white;
       ctx.fillRect(this.y * size, this.x * size, size, size);
@@ -43,6 +43,13 @@ export class ChessPieceComponent {
     }
     this.x = mx
     this.y = my
+    if (Math.abs(this.x - this.y) % 2 != 0) {
+      ctx.fillStyle = white;
+      ctx.fillRect(this.y * size, this.x * size, size, size);
+    } else {
+      ctx.fillStyle = black;
+      ctx.fillRect(this.y * size, this.x * size, size, size);
+    }
     ctx.drawImage(this.pieceImage, this.y * size, this.x * size, size, size)
   }
   canMove(pieces: piecesType, turn: "b" | "w") {
@@ -62,6 +69,19 @@ export class ChessPieceComponent {
         break
       case "rook":
         res = canRookMove(pieces,this.x,this.y,turn)
+        break
+      case "bishop":
+        res=canBishopMove(pieces,this.x,this.y,turn)
+        break
+      case "queen":
+        res=canQueenMove(pieces,this.x,this.y,turn)
+        break
+      case "king":
+        res=canKingMove(pieces,this.x,this.y,turn)
+        break
+      case "hourse":
+        res=canknightMove(pieces,this.x,this.y,turn)
+        break
     }
     return res
   }

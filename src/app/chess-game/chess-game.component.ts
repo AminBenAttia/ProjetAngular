@@ -11,7 +11,11 @@ import { ChessBoardComponent } from "./chess-board/chess-board.component";
 })
 export class ChessGameComponent {
 turn:"b"|"w"="b"
+gameOver:boolean=false
 changeTurn(turn:"b"|"w"){
 this.turn=turn
+}
+changeGameOver(go:boolean){
+this.gameOver=go
 }
 }

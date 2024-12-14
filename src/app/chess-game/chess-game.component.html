@@ -1,2 +1,3 @@
-<h1 style="color: white;text-align: center">{{turn=="b" ? "Black's Turn" : "white's turn"}}</h1>
-<app-chess-board [turn]="turn" (changeTurn)="changeTurn($event)"/>
+<h1 style="color: white;text-align: center" [hidden]="gameOver">{{turn=="b" ? "Black's Turn" : "white's turn"}}</h1>
+<h1 [hidden]="!gameOver"  style="color: white;text-align: center">Game Over bye bye</h1>
+<app-chess-board [turn]="turn" (changeTurn)="changeTurn($event)" (gameOver)="changeGameOver($event)" [isGameOver]="gameOver"/>
