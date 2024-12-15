@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
+import { AuthService } from '../auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -7,15 +9,21 @@ import { FormsModule, NgForm } from '@angular/forms';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
   imports: [
-  FormsModule
+  FormsModule,
   ],
 })
 export class LoginComponent {
   email: string = '';
   password: string = '';
-  onSubmit(f: NgForm) {
+  constructor(private service:AuthService,private router: Router){}
+  async onSubmit(f: NgForm) {
     const { email, password } = f.value;
     console.log(email)
-    //n3yto ll service
+    if(f.valid){
+      let login = await this.service.login(email,password)
+      if(login){
+        this.router.navigateByUrl('/')
+      }
+    }
   }
 }
