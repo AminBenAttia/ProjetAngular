@@ -22,7 +22,7 @@ export class LoginComponent {
     if(f.valid){
       let login = await this.service.login(email,password)
       if(login){
-        this.router.navigateByUrl('/')
+        this.router.navigateByUrl('/Chess')
       }
     }
   }

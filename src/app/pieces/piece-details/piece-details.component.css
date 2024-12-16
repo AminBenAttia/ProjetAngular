@@ -1,6 +1,8 @@
 .piece-list {
+    margin: 20px;
+    justify-content: center;
     display: flex;
     flex-wrap: wrap; 
-    justify-content: space-between; 
-    gap: 40px; 
-  }
+    flex-direction: row; 
+    gap: 20px; 
+}

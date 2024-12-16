@@ -1,13 +1,14 @@
 import { Component } from '@angular/core';
 import { Piece } from 'src/app/models/piece.model';
 import {PieceCardComponent} from '../piece-card/piece-card.component';
-import { NgFor } from '@angular/common'; 
+import { NgFor } from '@angular/common';
+import { NavbarComponent } from "../../navbar/navbar.component"; 
 @Component({
   selector: 'app-piece-details',
   standalone:true,
   templateUrl: './piece-details.component.html',
   styleUrls: ['./piece-details.component.css'],
-  imports: [PieceCardComponent,NgFor] 
+  imports: [PieceCardComponent, NgFor, NavbarComponent] 
 })
 export class PieceDetailsComponent {
   pieces: Piece[] = [

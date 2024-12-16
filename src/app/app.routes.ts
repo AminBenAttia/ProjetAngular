@@ -5,7 +5,7 @@ import { LoginComponent } from './authentication/login/login.component';
 import { ChessGameComponent } from './chess-game/chess-game.component';
 
 export const routes: Routes = [
-    {path:'',component:ChessGameComponent},
+    {path:'',component:LoginComponent},
     {path:'Tutorial',component:PieceDetailsComponent},
-    {path:'Login',component:LoginComponent}
+    {path:'Chess',component:ChessGameComponent}
 ];
