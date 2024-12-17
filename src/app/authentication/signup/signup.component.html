@@ -1,1 +1,40 @@
-<p>signup works!</p>
+<div class="login-box">
+    <h2>SignUp</h2>
+    <form #f="ngForm" (ngSubmit)="onSubmit(f)">
+      <div class="input-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="Enter your email" required ngModel />
+      </div>
+
+      <div class="input-group">
+        <label for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Enter your password"
+            ngModel
+            required
+          />
+      </div>
+
+      <div class="input-group">
+        <label for="password">Confirm Password</label>
+          <input
+            type="password"
+            id="cpassword"
+            name="cpassword"
+            placeholder="Enter your password again"
+            ngModel
+            required
+          />
+      </div>
+      <p style="color: red;"> {{errorMessage}}</p>
+
+      <button type="submit">SignUp</button>
+
+      <p>
+        Have an account? <a href="/">Login</a>
+      </p>
+    </form>
+  </div>
