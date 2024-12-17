@@ -15,6 +15,8 @@ import { Router } from '@angular/router';
 export class LoginComponent {
   email: string = '';
   password: string = '';
+  errorMessage: string='';
+
   constructor(private service:AuthService,private router: Router){}
   async onSubmit(f: NgForm) {
     const { email, password } = f.value;
@@ -24,6 +26,8 @@ export class LoginComponent {
       if(login){
         this.router.navigateByUrl('/Chess')
       }
-    }
+    }else{
+      this.errorMessage='Please fill in all the fields'
+   }
   }
 }

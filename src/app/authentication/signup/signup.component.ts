@@ -29,6 +29,9 @@ email: string = '';
     else{
        this.errorMessage='try again'
     }
-    }
+    }else{
+      this.errorMessage='Please fill in all the fields'
+   }
+    
   }
 }
